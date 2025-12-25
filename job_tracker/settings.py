@@ -1,5 +1,6 @@
 from pathlib import Path
 from datetime import timedelta
+import dj_database_url
 import os
 
 # ===============================
@@ -72,7 +73,7 @@ WSGI_APPLICATION = 'job_tracker.wsgi.application'
 # ===============================
 # DATABASE (RENDER READY)
 # ===============================
-import dj_database_url
+
 
 DATABASES = {
     "default": dj_database_url.config(
@@ -123,7 +124,7 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_CREDENTIALS = True
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://job_tracker.onrender.com",
+    "https://job-tracker.onrender.com",
 ]
 
 # ===============================
