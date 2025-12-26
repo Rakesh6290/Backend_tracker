@@ -4,7 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from datetime import date
-
+from django.contrib.auth.models import AnonymousUser
 from .models import JobApplication
 from .serializers import JobApplicationSerializer
 
@@ -25,19 +25,21 @@ class JobApplicationViewSet(viewsets.ModelViewSet):
     ordering = ['-applied_date']
 
     def get_queryset(self):
-        # Swagger schema generation time lo DB hit avoid cheyadaniki
+    # Swagger lo schema generation ki crash avvakunda
         if getattr(self, 'swagger_fake_view', False):
             return JobApplication.objects.none()
 
         user = self.request.user
-
-        if not user.is_authenticated:
+        if not user.is_authenticated or isinstance(user, AnonymousUser):
             return JobApplication.objects.none()
 
         return JobApplication.objects.filter(user=user)
 
+
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        if self.request.user.is_authenticated:
+            serializer.save(user=self.request.user)
+
 
     @action(
         detail=False,
