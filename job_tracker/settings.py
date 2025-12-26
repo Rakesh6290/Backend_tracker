@@ -25,7 +25,7 @@ DEBUG = os.getenv("DEBUG") == "True"
 
 ALLOWED_HOSTS = os.getenv(
     "ALLOWED_HOSTS",
-    ""
+    "backend-tracker-bsxy.onrender.com"
 ).split(",")
 
 # Application definition
@@ -170,5 +170,5 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://backend-tracker-b9oj.onrender.com",
+    "https://backend-tracker-bsxy.onrender.com",
 ]
