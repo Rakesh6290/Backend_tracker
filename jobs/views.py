@@ -6,7 +6,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from datetime import date
 from .models import JobApplication
 from .serializers import JobApplicationSerializer
-
+from rest_framework.permissions import IsAuthenticated
 
 class JobApplicationViewSet(viewsets.ModelViewSet):
     serializer_class = JobApplicationSerializer
@@ -19,12 +19,22 @@ class JobApplicationViewSet(viewsets.ModelViewSet):
     ordering = ['-applied_date']              
 
     def get_queryset(self):
-        return JobApplication.objects.filter(user=self.request.user)
+    # Swagger schema generation time lo crash avvakunda
+        if getattr(self, 'swagger_fake_view', False):
+            return JobApplication.objects.none()
+
+        user = self.request.user
+        if not user.is_authenticated:
+            return JobApplication.objects.none()
+
+        return JobApplication.objects.filter(user=user)
+
+
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
     def reminders_today(self, request):
         today = date.today()
         jobs = JobApplication.objects.filter(
@@ -33,3 +43,4 @@ class JobApplicationViewSet(viewsets.ModelViewSet):
         )
         serializer = self.get_serializer(jobs, many=True)
         return Response(serializer.data)
+
