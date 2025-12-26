@@ -19,10 +19,7 @@ class JobApplicationViewSet(viewsets.ModelViewSet):
     ordering = ['-applied_date']              
 
     def get_queryset(self):
-        user = self.request.user
-        if not user.is_authenticated:
-            return JobApplication.objects.none()  # return empty queryset if not logged in
-        return JobApplication.objects.filter(user=user)
+        return JobApplication.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
