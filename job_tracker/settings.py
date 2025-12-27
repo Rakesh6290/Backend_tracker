@@ -164,9 +164,10 @@ SWAGGER_SETTINGS = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:5500",   # Normal HTML
+    "https://frontend-tracker-blue.vercel.app",   # Normal HTML
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://backend-tracker-bsxy.onrender.com",
+    "https://frontend-tracker-blue.vercel.app"
 ]
