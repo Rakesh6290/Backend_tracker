@@ -5,7 +5,7 @@ The backend is built using **Django and Django REST Framework (DRF)** and provid
 consumed by a separate frontend application.
 
 🌐 Live Backend API  
-https://job_tracker.onrender.com/
+https://backend-tracker-bsxy.onrender.com
 
 ---
 
