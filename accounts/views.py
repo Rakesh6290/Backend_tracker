@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from drf_yasg.utils import swagger_auto_schema
 from .serializers import RegisterSerializer, LoginSerializer
+from .utils import delete_expired_guest_users
 
 User = get_user_model()
 
@@ -44,6 +45,7 @@ class GuestLoginView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
+        delete_expired_guest_users()
         username = f"guest_{uuid.uuid4().hex[:8]}"
         random_password = uuid.uuid4().hex
 
@@ -59,5 +61,6 @@ class GuestLoginView(APIView):
         return Response({
             "guest": True,
             "username": username,
-            "access": str(refresh.access_token)
+            "access": str(refresh.access_token),
+            "expires_in_minutes": 25
         })

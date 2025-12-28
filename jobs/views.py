@@ -7,7 +7,7 @@ from datetime import date
 from django.contrib.auth.models import AnonymousUser
 from .models import JobApplication
 from .serializers import JobApplicationSerializer
-
+from django.utils import timezone
 
 class JobApplicationViewSet(viewsets.ModelViewSet):
     serializer_class = JobApplicationSerializer
@@ -25,32 +25,17 @@ class JobApplicationViewSet(viewsets.ModelViewSet):
     ordering = ['-applied_date']
 
     def get_queryset(self):
-    # Swagger lo schema generation ki crash avvakunda
         if getattr(self, 'swagger_fake_view', False):
             return JobApplication.objects.none()
 
-        user = self.request.user
-        if not user.is_authenticated or isinstance(user, AnonymousUser):
-            return JobApplication.objects.none()
-
-        return JobApplication.objects.filter(user=user)
-
+        return JobApplication.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        if self.request.user.is_authenticated:
-            serializer.save(user=self.request.user)
+        serializer.save(user=self.request.user)
 
-
-    @action(
-        detail=False,
-        methods=['get'],
-        permission_classes=[permissions.IsAuthenticated]
-    )
+    @action(detail=False, methods=['get'])
     def reminders_today(self, request):
-        today = date.today()
-        jobs = JobApplication.objects.filter(
-            user=request.user,
-            follow_up_date=today
-        )
+        today = timezone.localdate()
+        jobs = self.get_queryset().filter(follow_up_date=today)
         serializer = self.get_serializer(jobs, many=True)
         return Response(serializer.data)
